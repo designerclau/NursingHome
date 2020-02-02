@@ -30,32 +30,32 @@ import util.Tools;
  * @author Claudinea de Almeida
  */
 public class RoutineDAO {
+    //creation of the variabel connection
      private Connection con = null;
 
+    //method save 
     public boolean Save(DailyRoutine routine){
-
+        //instance of the class tools
         Tools tool = new Tools();
+        //getting and formating the actual date
         String actualdate =tool.checkActualDate();
-        
+        //getting the connection using the connection class
         con = ConnectionFactory.getConnection();
-             
-
-
+        //string SQL to insert into the MySQL
         String sql="INSERT INTO routine (residentid,date,meal,itemid, quantity,comments,employeeid) values (?,?,?,?,?,?,?)";
         PreparedStatement stmt = null;
-        
         try {
+            //using the string sql
             stmt=con.prepareStatement(sql);
-            System.out.println(routine.getResident().getResidentId());
+            //setting the values as parameters
             stmt.setInt(1, routine.getResident().getResidentId());
             stmt.setString(2, actualdate);
             stmt.setString(3, routine.getMeal());
-            
             stmt.setInt(4, routine.getItem().getItemId());
             stmt.setString(5, routine.getQuantity());
             stmt.setString(6, routine.getComments());
             stmt.setInt(7, routine.getEmployee().getEmployeeId());
-
+            //executing the sql with parameters
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Saved sucessfuly");
             return true;
@@ -65,8 +65,6 @@ public class RoutineDAO {
         } finally{
             ConnectionFactory.CloseConnection(con, stmt);
         }
-        
-        
     }
     
 
@@ -90,7 +88,6 @@ public class RoutineDAO {
             stmt.setInt(3, routine.getItem().getItemId());
             stmt.setString(4, routine.getQuantity());
             stmt.setString(5, routine.getComments());
-            System.out.println(routine.getId());
             stmt.setInt(6, routine.getId());
 
             stmt.executeUpdate();

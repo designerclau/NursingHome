@@ -37,16 +37,52 @@ public class NHMSMenu extends javax.swing.JFrame {
     
     public SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private String caminho;
+    String username=null;
     int idResident=0;
-    private int idEmployee= 7;
+    int leveluser=0;
+    int idEmployee= 0;
     Date actualDate = new Date(System.currentTimeMillis());
+    
+    public NHMSMenu(int userid,String name,int levelaccess) {
+        //initialization of the Swing components
+        initComponents();
+        //initialization of the variable idEmployee
+        idEmployee=userid;
+         //initialization of the variable username
+        username=name;
+         //initialization of the variable leveluser
+        leveluser=levelaccess;
+         //centralization of the windows
+        setLocationRelativeTo(null);
+        //changing the image icone of the window
+        URL url = this.getClass().getResource("/images/hospital.png"); 
+        Image imagemTitulo = Toolkit.getDefaultToolkit().getImage(url); 
+        this.setIconImage(imagemTitulo);
+        
+        //calling the method checklevel with the parameter leveluser
+        checklevel(leveluser);
+        //calling the method readTableRoutine()
+        readTableRoutine();
+        //calling the method readTableResidentRoutine()
+        readTableResidentRoutine();
+        //calling the method listItem with the combobox Category items
+        listItems(jComboCategoryItemRoutine.getSelectedItem().toString());
+        //inserting the username into a label
+        jLabUserName.setText("Welcome "+username);
+        
+    }
     
     public NHMSMenu() {
         initComponents();
+        
         setLocationRelativeTo(null);
         URL url = this.getClass().getResource("/images/hospital.png"); 
         Image imagemTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(imagemTitulo);
+        readTableRoutine();
+        readTableResidentRoutine();
+        listItems(jComboCategoryItemRoutine.getSelectedItem().toString());
+
     }
 
     public void clearText(){
@@ -133,6 +169,54 @@ public class NHMSMenu extends javax.swing.JFrame {
          
     }
     
+    public void checklevel(int level){
+        
+        switch(level){
+        case 0:{
+            employeebtn.setEnabled(true);
+            rosterbtn.setEnabled(true);
+            residentbtn.setEnabled(true);
+            dailyroutinebtn.setEnabled(true);
+            itemsbtn2.setEnabled(true);
+            jLabTitle.setText("Routine");
+            break;
+        }
+        case 1:{
+            employeebtn.setEnabled(true);
+            rosterbtn.setEnabled(true);
+            jTabPanel.setSelectedIndex(2);
+            jLabTitle.setText("Employee");
+            readTable();
+            residentbtn.setEnabled(false);
+            dailyroutinebtn.setEnabled(false);
+            itemsbtn2.setEnabled(false);
+            break;
+        }
+        case 2:{
+            residentbtn.setEnabled(true);
+            jTabPanel.setSelectedIndex(1);
+            jLabTitle.setText("Resident");
+            readTableResident();
+            employeebtn.setEnabled(false);
+            rosterbtn.setEnabled(false);          
+            dailyroutinebtn.setEnabled(false);
+            itemsbtn2.setEnabled(false);
+            break;
+        }
+         case 3:{
+            dailyroutinebtn.setEnabled(true);
+            jLabTitle.setText("Routine");
+            employeebtn.setEnabled(false);
+            rosterbtn.setEnabled(false);
+            residentbtn.setEnabled(false);
+            itemsbtn2.setEnabled(false);
+            break;
+        }
+         default :
+            JOptionPane.showMessageDialog(null, "Error. Invalid user level "+level);
+            
+        }
+    }
     
     public void readTable(){
         DefaultTableModel model = (DefaultTableModel) jTabEmployee.getModel();
@@ -250,6 +334,29 @@ public class NHMSMenu extends javax.swing.JFrame {
         
     }
     
+        
+    public void readTableResidentRoutine(){
+        DefaultTableModel modelR =  (DefaultTableModel) jTabResidentRoutine.getModel();
+       
+          
+        
+        modelR.setNumRows(0);
+
+        ResidentDAO daoR = new ResidentDAO();
+        
+        for(Resident e:daoR.readResident()){
+            modelR.addRow(new Object[]{
+                  e.getResidentId(),
+                  e.getName()
+             
+                    
+            });
+            caminho=e.getPicture();
+           
+        }
+       
+        
+    }
      
     /**
      * This method is called from within the constructor to initialize the form.
@@ -267,9 +374,11 @@ public class NHMSMenu extends javax.swing.JFrame {
         dailyroutinebtn = new javax.swing.JButton();
         residentbtn = new javax.swing.JButton();
         employeebtn = new javax.swing.JButton();
-        itembtn = new javax.swing.JButton();
         rosterbtn = new javax.swing.JButton();
+        jLabUserName = new javax.swing.JLabel();
+        itemsbtn2 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
+        jLabTitle = new javax.swing.JLabel();
         jTabPanel = new javax.swing.JTabbedPane();
         jPanelRoutine = new javax.swing.JPanel();
         jLabel37 = new javax.swing.JLabel();
@@ -283,8 +392,6 @@ public class NHMSMenu extends javax.swing.JFrame {
         jComboMealRoutine = new javax.swing.JComboBox<>();
         jPanelResidentPicRoutine = new javax.swing.JPanel();
         jLResidentPicRoutine = new javax.swing.JLabel();
-        jLabel62 = new javax.swing.JLabel();
-        jComboCategoryRoutine = new javax.swing.JComboBox<>();
         jLabel56 = new javax.swing.JLabel();
         jComboQuantityRoutine = new javax.swing.JComboBox<>();
         jSeparator7 = new javax.swing.JSeparator();
@@ -299,6 +406,8 @@ public class NHMSMenu extends javax.swing.JFrame {
         btndeleteRoutine = new javax.swing.JButton();
         jbtnupdateRoutine = new javax.swing.JButton();
         jBtnSaveRoutine = new javax.swing.JButton();
+        jLabel65 = new javax.swing.JLabel();
+        jComboCategoryItemRoutine = new javax.swing.JComboBox<>();
         jPanelResident = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
         jTabResident = new javax.swing.JTable();
@@ -383,6 +492,8 @@ public class NHMSMenu extends javax.swing.JFrame {
         btnsaveemployee = new javax.swing.JButton();
         btnupdateemployee = new javax.swing.JButton();
         btndeleteemployee = new javax.swing.JButton();
+        jLabel54 = new javax.swing.JLabel();
+        employeelevel = new javax.swing.JComboBox<>();
         jPanelItems = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
         jTextIdItem = new javax.swing.JTextField();
@@ -469,20 +580,6 @@ public class NHMSMenu extends javax.swing.JFrame {
             }
         });
 
-        itembtn.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        itembtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chicken.png"))); // NOI18N
-        itembtn.setText("Items       ");
-        itembtn.setBorder(null);
-        itembtn.setBorderPainted(false);
-        itembtn.setIconTextGap(10);
-        itembtn.setInheritsPopupMenu(true);
-        itembtn.setOpaque(false);
-        itembtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itembtnActionPerformed(evt);
-            }
-        });
-
         rosterbtn.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
         rosterbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Roster.png"))); // NOI18N
         rosterbtn.setText("Roster     ");
@@ -495,30 +592,55 @@ public class NHMSMenu extends javax.swing.JFrame {
             }
         });
 
+        jLabUserName.setFont(new java.awt.Font("Lucida Calligraphy", 0, 12)); // NOI18N
+        jLabUserName.setText("Wellcome");
+
+        itemsbtn2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        itemsbtn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chicken.png"))); // NOI18N
+        itemsbtn2.setText("Items      ");
+        itemsbtn2.setToolTipText("");
+        itemsbtn2.setBorder(null);
+        itemsbtn2.setIconTextGap(8);
+        itemsbtn2.setMaximumSize(new java.awt.Dimension(123, 33));
+        itemsbtn2.setMinimumSize(new java.awt.Dimension(123, 33));
+        itemsbtn2.setPreferredSize(new java.awt.Dimension(123, 33));
+        itemsbtn2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemsbtn2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelMenuLayout = new javax.swing.GroupLayout(jPanelMenu);
         jPanelMenu.setLayout(jPanelMenuLayout);
         jPanelMenuLayout.setHorizontalGroup(
             jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMenuLayout.createSequentialGroup()
-                .addGap(51, 51, 51)
                 .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
-            .addGroup(jPanelMenuLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(residentbtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(employeebtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(itembtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(rosterbtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dailyroutinebtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanelMenuLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(residentbtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(employeebtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(rosterbtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dailyroutinebtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanelMenuLayout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 34, Short.MAX_VALUE))
+                    .addGroup(jPanelMenuLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(itemsbtn2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelMenuLayout.setVerticalGroup(
             jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMenuLayout.createSequentialGroup()
-                .addGap(94, 94, 94)
+                .addContainerGap()
+                .addComponent(jLabUserName)
+                .addGap(49, 49, 49)
                 .addComponent(jLabel1)
                 .addGap(183, 183, 183)
                 .addComponent(dailyroutinebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -527,10 +649,10 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(employeebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(itembtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addComponent(itemsbtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(rosterbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 271, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 295, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(344, 344, 344))
         );
@@ -539,15 +661,25 @@ public class NHMSMenu extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
+        jLabTitle.setFont(new java.awt.Font("Lucida Calligraphy", 0, 18)); // NOI18N
+        jLabTitle.setText("Routine");
+        jLabTitle.setToolTipText("");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1890, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(425, 425, 425)
+                .addComponent(jLabTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(1304, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(jLabTitle)
+                .addContainerGap(53, Short.MAX_VALUE))
         );
 
         jPanel2.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1890, -1));
@@ -642,20 +774,10 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel62.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel62.setText("Category:");
-
-        jComboCategoryRoutine.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Food", "Drink", "Hygiene", "Room Tidy" }));
-        jComboCategoryRoutine.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboCategoryRoutineActionPerformed(evt);
-            }
-        });
-
         jLabel56.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel56.setText("Quantity:");
 
-        jComboQuantityRoutine.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Full", "Half" }));
+        jComboQuantityRoutine.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Full", "Half", "None" }));
 
         jLabel64.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel64.setText("Item:");
@@ -774,6 +896,16 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
+        jLabel65.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel65.setText("Category:");
+
+        jComboCategoryItemRoutine.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Food", "Drink", "Hygiene", "Room Tidy" }));
+        jComboCategoryItemRoutine.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboCategoryItemRoutineActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelRoutineLayout = new javax.swing.GroupLayout(jPanelRoutine);
         jPanelRoutine.setLayout(jPanelRoutineLayout);
         jPanelRoutineLayout.setHorizontalGroup(
@@ -787,26 +919,25 @@ public class NHMSMenu extends javax.swing.JFrame {
                             .addComponent(jLabel37))
                         .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelRoutineLayout.createSequentialGroup()
-                                .addGap(414, 414, 414)
-                                .addComponent(jLabel62)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboCategoryRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(65, 65, 65)
-                                .addComponent(jLabel56)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboQuantityRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanelRoutineLayout.createSequentialGroup()
                                 .addGap(68, 68, 68)
                                 .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanelRoutineLayout.createSequentialGroup()
                                         .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addComponent(jLabel63)
-                                            .addComponent(jLabel64))
+                                            .addComponent(jLabel64)
+                                            .addComponent(jLabel65))
                                         .addGap(18, 18, 18)
                                         .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jTextCommentsRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jComboItemsRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                            .addGroup(jPanelRoutineLayout.createSequentialGroup()
+                                                .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                    .addComponent(jComboCategoryItemRoutine, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(jComboItemsRoutine, javax.swing.GroupLayout.Alignment.LEADING, 0, 190, Short.MAX_VALUE))
+                                                .addGap(47, 47, 47)
+                                                .addComponent(jLabel56)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jComboQuantityRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                             .addGroup(jPanelRoutineLayout.createSequentialGroup()
                                 .addGap(87, 87, 87)
                                 .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 821, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -826,7 +957,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                     .addGroup(jPanelRoutineLayout.createSequentialGroup()
                         .addGap(58, 58, 58)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(1005, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
         );
         jPanelRoutineLayout.setVerticalGroup(
             jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -854,10 +985,16 @@ public class NHMSMenu extends javax.swing.JFrame {
                             .addComponent(jPanelResidentPicRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(49, 49, 49)
                         .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(79, 79, 79)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel65)
+                            .addComponent(jComboCategoryItemRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(46, 46, 46)
                         .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel64)
-                            .addComponent(jComboItemsRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jComboItemsRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel56)
+                            .addComponent(jComboQuantityRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(29, 29, 29)
                         .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel63)
@@ -866,13 +1003,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 653, Short.MAX_VALUE)
-                .addGroup(jPanelRoutineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel56)
-                    .addComponent(jComboQuantityRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel62)
-                    .addComponent(jComboCategoryRoutine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(358, Short.MAX_VALUE))
         );
 
         jTabPanel.addTab("tab1", jPanelRoutine);
@@ -914,6 +1045,11 @@ public class NHMSMenu extends javax.swing.JFrame {
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel11.setText("Name:");
 
+        jTextResidentName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextResidentNameFocusLost(evt);
+            }
+        });
         jTextResidentName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextResidentNameActionPerformed(evt);
@@ -1202,27 +1338,29 @@ public class NHMSMenu extends javax.swing.JFrame {
                     .addGroup(jPanelResidentLayout.createSequentialGroup()
                         .addGap(375, 375, 375)
                         .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanelResidentLayout.createSequentialGroup()
                                 .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel33)
+                                    .addComponent(jLabel18)
                                     .addComponent(jLabel17))
-                                .addGap(27, 27, 27)
-                                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextResidentKindName)
-                                    .addComponent(jTextResidentKindEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(49, 49, 49)
-                                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel35)
-                                    .addComponent(jLabel18))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(23, 23, 23)
                                 .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jTextResidentKindPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextResidentKindAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jTextResidentKindName, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(49, 49, 49)
+                                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanelResidentLayout.createSequentialGroup()
+                                        .addComponent(jLabel35)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextResidentKindAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanelResidentLayout.createSequentialGroup()
+                                        .addComponent(jLabel33)
+                                        .addGap(27, 27, 27)
+                                        .addComponent(jTextResidentKindEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jLabel36, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jSeparator6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 909, Short.MAX_VALUE)
                                 .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.LEADING)))))
-                .addContainerGap(1059, Short.MAX_VALUE))
+                .addContainerGap(270, Short.MAX_VALUE))
         );
         jPanelResidentLayout.setVerticalGroup(
             jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1253,7 +1391,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                                 .addComponent(jPaneResidentImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jBtnResidentPic)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(13, 13, 13))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelResidentLayout.createSequentialGroup()
@@ -1291,20 +1429,24 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel36)
                 .addGap(33, 33, 33)
-                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(jTextResidentKindName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18)
-                    .addComponent(jTextResidentKindPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel33)
+                        .addComponent(jTextResidentKindEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel17)
+                        .addComponent(jTextResidentKindName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel33)
-                    .addComponent(jTextResidentKindEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel35)
-                    .addComponent(jTextResidentKindAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel18)
+                        .addComponent(jTextResidentKindPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelResidentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel35)
+                        .addComponent(jTextResidentKindAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(660, Short.MAX_VALUE))
+                .addContainerGap(373, Short.MAX_VALUE))
         );
 
         jTabPanel.addTab("tab2", jPanelResident);
@@ -1369,6 +1511,9 @@ public class NHMSMenu extends javax.swing.JFrame {
         employeepps.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 employeeppsFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                employeeppsFocusLost(evt);
             }
         });
         employeepps.addActionListener(new java.awt.event.ActionListener() {
@@ -1540,6 +1685,16 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel54.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel54.setText("Level:");
+
+        employeelevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrator", "HR", "Receptionist", "Nurse/Care" }));
+        employeelevel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                employeelevelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelEmployeeLayout = new javax.swing.GroupLayout(jPanelEmployee);
         jPanelEmployee.setLayout(jPanelEmployeeLayout);
         jPanelEmployeeLayout.setHorizontalGroup(
@@ -1563,7 +1718,12 @@ public class NHMSMenu extends javax.swing.JFrame {
                             .addComponent(employeestartdate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(employeetypeoftime, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(employeejobtitle, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(employeepassword, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanelEmployeeLayout.createSequentialGroup()
+                                .addComponent(employeepassword, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(30, 30, 30)
+                                .addComponent(jLabel54)
+                                .addGap(18, 18, 18)
+                                .addComponent(employeelevel, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanelEmployeeLayout.createSequentialGroup()
                         .addGap(98, 98, 98)
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1616,7 +1776,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                                                 .addComponent(employeeemail, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE))
                                             .addComponent(employeecertificate, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(employeeaddress, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
-                .addContainerGap(1117, Short.MAX_VALUE))
+                .addContainerGap(328, Short.MAX_VALUE))
         );
         jPanelEmployeeLayout.setVerticalGroup(
             jPanelEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1685,10 +1845,12 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanelEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel43)
-                    .addComponent(employeepassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(employeepassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel54)
+                    .addComponent(employeelevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(758, Short.MAX_VALUE))
+                .addContainerGap(430, Short.MAX_VALUE))
         );
 
         jTabPanel.addTab("tab3", jPanelEmployee);
@@ -1718,6 +1880,11 @@ public class NHMSMenu extends javax.swing.JFrame {
         jLabel55.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel55.setText("Description:");
 
+        jTextItemDescription.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextItemDescriptionFocusLost(evt);
+            }
+        });
         jTextItemDescription.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextItemDescriptionActionPerformed(evt);
@@ -1875,7 +2042,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                     .addGroup(jPanelItemsLayout.createSequentialGroup()
                         .addGap(86, 86, 86)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 1216, Short.MAX_VALUE))
+                .addGap(0, 427, Short.MAX_VALUE))
             .addGroup(jPanelItemsLayout.createSequentialGroup()
                 .addGap(1002, 1002, 1002)
                 .addComponent(jBtnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1905,7 +2072,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                 .addComponent(jPanelTabItemContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(63, 63, 63)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(664, Short.MAX_VALUE))
+                .addContainerGap(336, Short.MAX_VALUE))
         );
 
         jTabPanel.addTab("tab4", jPanelItems);
@@ -1937,7 +2104,12 @@ public class NHMSMenu extends javax.swing.JFrame {
         jLabel53.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel53.setText("Start time:");
 
-        jComboStartRoster.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "7", "8", "9" }));
+        jComboStartRoster.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "7 am", "8 am", "9 am", "7 pm", "8 pm", "9 pm" }));
+        jComboStartRoster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboStartRosterActionPerformed(evt);
+            }
+        });
 
         jLabel59.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel59.setText("hours");
@@ -1945,7 +2117,7 @@ public class NHMSMenu extends javax.swing.JFrame {
         jLabel58.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel58.setText("Finish time:");
 
-        jComboFinishRoster.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "6", "7", "8", "9" }));
+        jComboFinishRoster.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "6 am", "7 am", "8 am", "9 am", "6 pm", "7 pm", "8 pm", "9 pm", " " }));
 
         jLabel60.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel60.setText("hours");
@@ -2095,7 +2267,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                                     .addComponent(jComboEmployeeRoster, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jTextDateRoster, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jLabel47, javax.swing.GroupLayout.Alignment.LEADING))))
-                .addContainerGap(1172, Short.MAX_VALUE))
+                .addContainerGap(383, Short.MAX_VALUE))
         );
         jPanelRosterLayout.setVerticalGroup(
             jPanelRosterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2122,7 +2294,7 @@ public class NHMSMenu extends javax.swing.JFrame {
                     .addComponent(jLabel58)
                     .addComponent(jComboFinishRoster, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel60, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(43, 43, 43)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2150,32 +2322,35 @@ public class NHMSMenu extends javax.swing.JFrame {
     private void dailyroutinebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dailyroutinebtnActionPerformed
         jTabPanel.setSelectedIndex(0);
         readTableRoutine();
+        readTableResidentRoutine();
+        jComboCategoryItemRoutine.setSelectedIndex(0);
+        listItems(jComboCategoryItemRoutine.getSelectedItem().toString());
+        jLabTitle.setText("Routine");
+
+     
         
     }//GEN-LAST:event_dailyroutinebtnActionPerformed
 
     private void residentbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_residentbtnActionPerformed
         jTabPanel.setSelectedIndex(1);
         readTableResident();
+        jLabTitle.setText("Resident");
 
     }//GEN-LAST:event_residentbtnActionPerformed
 
     private void employeebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeebtnActionPerformed
         jTabPanel.setSelectedIndex(2);
         readTable();
+        jLabTitle.setText("Employee");
 
     }//GEN-LAST:event_employeebtnActionPerformed
-
-    private void itembtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itembtnActionPerformed
-        jTabPanel.setSelectedIndex(3);
-        readTableItem();
-
-    }//GEN-LAST:event_itembtnActionPerformed
 
     private void rosterbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rosterbtnActionPerformed
         // TODO add your handling code here:
         jTabPanel.setSelectedIndex(4);
         readComboEmpployee();
         readTableRoster();
+        jLabTitle.setText("Roster");
 
     }//GEN-LAST:event_rosterbtnActionPerformed
 
@@ -2264,18 +2439,22 @@ public class NHMSMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jTabRosterKeyReleased
 
     private void btndeleteRosterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteRosterActionPerformed
-        // TODO add your handling code here:
+        int input = JOptionPane.showConfirmDialog(null,
+                "Do you want to proceed?", "Select an Option...",JOptionPane.YES_NO_OPTION);
 
-        if (jTabRoster.getSelectedRow() != -1){
-            Roster roster = new Roster();
-            RosterDAO daoR = new RosterDAO();
+	// 0=yes, 1=no, 2=cancel
+        if (input == 0){
 
-            roster.setId((int)jTabRoster.getValueAt(jTabRoster.getSelectedRow(), 0));
+            if (jTabRoster.getSelectedRow() != -1){
+                Roster roster = new Roster();
+                RosterDAO daoR = new RosterDAO();
 
-            daoR.delete(roster);
-            readTableRoster();
-            clearTextRoster();
+                roster.setId((int)jTabRoster.getValueAt(jTabRoster.getSelectedRow(), 0));
 
+                daoR.delete(roster);
+                readTableRoster();
+                clearTextRoster();
+            }
         }
     }//GEN-LAST:event_btndeleteRosterActionPerformed
 
@@ -2369,7 +2548,8 @@ public class NHMSMenu extends javax.swing.JFrame {
                     employeelocation.setText(c.getLocation());
                     employeetypeoftime.setSelectedItem(c.getTypeoftime());
                     employeejobtitle.setText(c.getJobtitle());
-                    employeepassword.setText(c.getPassword());
+                    employeepassword.setText("");
+                    employeelevel.setSelectedIndex(c.getLevel());
                 } catch (ParseException ex) {
                     JOptionPane.showMessageDialog(null, "Error. There is a problem with the table: "+ex);
                 }
@@ -2414,7 +2594,8 @@ public class NHMSMenu extends javax.swing.JFrame {
                     employeelocation.setText(c.getLocation());
                     employeetypeoftime.setSelectedItem(c.getTypeoftime());
                     employeejobtitle.setText(c.getJobtitle());
-                    employeepassword.setText(c.getPassword());
+                    employeepassword.setText("");
+                    employeelevel.setSelectedIndex(c.getLevel());
                 } catch (ParseException ex) {
                     JOptionPane.showMessageDialog(null, "Error. There is a problem with the table: "+ex);
                 }
@@ -2426,14 +2607,14 @@ public class NHMSMenu extends javax.swing.JFrame {
 
     private void employeenameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_employeenameFocusLost
         // TODO add your handling code here:
-        //        String texto=employeename.getText();
-        //
-        //        Tools tools = new Tools();
-        //        boolean result = tools.validateText(texto);
-        //        if (!result){
-            //            JOptionPane.showMessageDialog(null, "Error. Name not valid. Type it again");
-            //            employeename.requestFocus();
-            //        }
+        String texto=employeename.getText();
+        
+        Tools tools = new Tools();
+        boolean result = tools.validateText(texto);
+        if (!result){
+            JOptionPane.showMessageDialog(null, "Error. Name of Employee not valid. Type it again");
+            employeename.requestFocus();
+        }
     }//GEN-LAST:event_employeenameFocusLost
 
     private void employeenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeenameActionPerformed
@@ -2505,9 +2686,9 @@ public class NHMSMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
         String texto=employeejobtitle.getText();
 
-      //  Tools tools = new Tools();
-      //  boolean result = tools.validateText(texto);
-        if (texto.isEmpty()){
+        Tools tools = new Tools();
+        boolean result = tools.validateText(texto);
+        if (!result){
             JOptionPane.showMessageDialog(null, "Error. Job Title not valid. Type it again");
             employeejobtitle.requestFocus();
         }
@@ -2552,6 +2733,7 @@ public class NHMSMenu extends javax.swing.JFrame {
         employee.setTypeoftime(employeetypeoftime.getSelectedItem().toString());
         employee.setJobtitle(employeejobtitle.getText());
         employee.setPassword(String.valueOf(employeepassword.getPassword()));
+        employee.setLevel(employeelevel.getSelectedIndex());
 
         dao.Save(employee);
         readTable();
@@ -2562,53 +2744,63 @@ public class NHMSMenu extends javax.swing.JFrame {
 
     private void btnupdateemployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateemployeeActionPerformed
         // TODO add your handling code here:
+        if (employeepassword.getText()==null || employeepassword.getText().equals("")){
+           JOptionPane.showMessageDialog(null, "Please type the password again ");   
+           //employeepassword.requestFocus();
+           
+        }else {
+            DefaultTableModel model = (DefaultTableModel) jTabEmployee.getModel();
+            if (jTabEmployee.getSelectedRow() != -1){
+                Employee employee = new Employee();
+                EmployeeDAO dao = new EmployeeDAO();
 
-        DefaultTableModel model = (DefaultTableModel) jTabEmployee.getModel();
-        if (jTabEmployee.getSelectedRow() != -1){
-            Employee employee = new Employee();
-            EmployeeDAO dao = new EmployeeDAO();
+                Tools tools = new Tools();
+                String datestr=tools.convertDatetoString(employeedateofbirth.getDate());
 
-            Tools tools = new Tools();
-            String datestr=tools.convertDatetoString(employeedateofbirth.getDate());
+                employee.setName(employeename.getText());
+                employee.setDateofbirth(datestr);
+                employee.setPpsnumber(employeepps.getText());
+                employee.setPhone(employeephone.getText());
+                employee.setEmail(employeeemail.getText());
+                employee.setAddress(employeeaddress.getText());
+                employee.setCertificate(employeecertificate.getText());
+                employee.setSpecialist(employeespecialist.getText());
+                employee.setNationality(employeecountry.getSelectedItem().toString());
+                employee.setPassport(employeepassport.getText());
 
-            employee.setName(employeename.getText());
-            employee.setDateofbirth(datestr);
-            employee.setPpsnumber(employeepps.getText());
-            employee.setPhone(employeephone.getText());
-            employee.setEmail(employeeemail.getText());
-            employee.setAddress(employeeaddress.getText());
-            employee.setCertificate(employeecertificate.getText());
-            employee.setSpecialist(employeespecialist.getText());
-            employee.setNationality(employeecountry.getSelectedItem().toString());
-            employee.setPassport(employeepassport.getText());
+                String datestr2=tools.convertDatetoString(employeestartdate.getDate());
+                employee.setStartdate(datestr2);
+                employee.setLocation(employeelocation.getText());
+                employee.setTypeoftime(employeetypeoftime.getSelectedItem().toString());
+                employee.setJobtitle(employeejobtitle.getText());
+                employee.setPassword(String.valueOf(employeepassword.getPassword()));
+                employee.setLevel(employeelevel.getSelectedIndex());
+                employee.setEmployeeId( (int)jTabEmployee.getValueAt(jTabEmployee.getSelectedRow(), 0));
 
-            String datestr2=tools.convertDatetoString(employeestartdate.getDate());
-            employee.setStartdate(datestr2);
-            employee.setLocation(employeelocation.getText());
-            employee.setTypeoftime(employeetypeoftime.getSelectedItem().toString());
-            employee.setJobtitle(employeejobtitle.getText());
-            employee.setPassword(String.valueOf(employeepassword.getPassword()));
-            employee.setEmployeeId( (int)jTabEmployee.getValueAt(jTabEmployee.getSelectedRow(), 0));
+                dao.update(employee);
+                readTable();
 
-            dao.update(employee);
-            readTable();
-
-            clearText();
+                clearText();
+            }
         }
     }//GEN-LAST:event_btnupdateemployeeActionPerformed
 
     private void btndeleteemployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteemployeeActionPerformed
-        // TODO add your handling code here:
-        if (jTabEmployee.getSelectedRow() != -1){
-            Employee employee = new Employee();
-            EmployeeDAO daoE = new EmployeeDAO();
+        int input = JOptionPane.showConfirmDialog(null,
+                "Do you want to proceed?", "Select an Option...",JOptionPane.YES_NO_OPTION);
 
-            employee.setEmployeeId( (int)jTabEmployee.getValueAt(jTabEmployee.getSelectedRow(), 0));
+	// 0=yes, 1=no, 2=cancel
+        if (input == 0){
+            if (jTabEmployee.getSelectedRow() != -1){
+                Employee employee = new Employee();
+                EmployeeDAO daoE = new EmployeeDAO();
 
-            daoE.delete(employee);
-            readTable();
-            clearText();
+                employee.setEmployeeId( (int)jTabEmployee.getValueAt(jTabEmployee.getSelectedRow(), 0));
 
+                daoE.delete(employee);
+                readTable();
+                clearText();
+            }
         }
     }//GEN-LAST:event_btndeleteemployeeActionPerformed
 
@@ -2629,36 +2821,40 @@ public class NHMSMenu extends javax.swing.JFrame {
 
     private void jBtnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOpenFileActionPerformed
         // TODO add your handling code here:
+          
+        if (jTextItemDescription.getText() != null && jTextItemDescription.getText().length() > 3) {
+                // Cria o objeto Janela de Sele��o de Arquivos
+                javax.swing.JFileChooser seletor =
+                new javax.swing.JFileChooser();
+                // seletor.setCurrentDirectory(new File());
 
-        // Cria o objeto Janela de Sele��o de Arquivos
-        javax.swing.JFileChooser seletor =
-        new javax.swing.JFileChooser();
-        // seletor.setCurrentDirectory(new File());
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Image JPG", "jpg");
+                seletor.addChoosableFileFilter(filter);
+                seletor.setAcceptAllFileFilterUsed(false);
+                seletor.setCurrentDirectory(new File("D:\\CCT projects\\imagem"));
+                // Exibir a janela de sele��o
+                int acao = seletor.showOpenDialog(this);
 
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Image JPG", "jpg");
-        seletor.addChoosableFileFilter(filter);
-        seletor.setAcceptAllFileFilterUsed(false);
-        seletor.setCurrentDirectory(new File("D:\\CCT projects\\imagem"));
-        // Exibir a janela de sele��o
-        int acao = seletor.showOpenDialog(this);
+                // Captura o arquivo selecionado na janela
+                java.io.File f = seletor.getSelectedFile();
 
-        // Captura o arquivo selecionado na janela
-        java.io.File f = seletor.getSelectedFile();
+                // Essa vari�vel deve ser declara no in�cio do
+                // c�digo, logo ap�s o nome da classe
+                // ex.  public class Cadastro{
+                    //          String caminho;
 
-        // Essa vari�vel deve ser declara no in�cio do
-        // c�digo, logo ap�s o nome da classe
-        // ex.  public class Cadastro{
-            //          String caminho;
-
-            caminho = f.getPath();
-            Image img = new ImageIcon(caminho).getImage().getScaledInstance(foto.getWidth(),foto.getHeight(), Image.SCALE_DEFAULT );
-            foto.setIcon(new ImageIcon(img));
-            String nome = jTextItemDescription.getText().trim();
-            //alterar aqui
-            File copia = new File("./src/images/"+nome+".jpg");
-            Tools tools = new Tools();
-            tools.copiar(f, copia);
-            caminho = "./src/images/"+nome+".jpg";
+                    caminho = f.getPath();
+                    Image img = new ImageIcon(caminho).getImage().getScaledInstance(foto.getWidth(),foto.getHeight(), Image.SCALE_DEFAULT );
+                    foto.setIcon(new ImageIcon(img));
+                    String nome = jTextItemDescription.getText().trim();
+                    //alterar aqui
+                    File copia = new File("./src/images/"+nome+".jpg");
+                    Tools tools = new Tools();
+                    tools.copiar(f, copia);
+                    caminho = "./src/images/"+nome+".jpg";
+        }else{
+               JOptionPane.showMessageDialog(null, "Error. The description can not be empty. Type it again ");
+        }
 
     }//GEN-LAST:event_jBtnOpenFileActionPerformed
 
@@ -2755,17 +2951,21 @@ public class NHMSMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jbtnupdateItemActionPerformed
 
     private void btndeleteItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteItemActionPerformed
-        // TODO add your handling code here:
-        if (jTabItem.getSelectedRow() != -1){
-            Item item = new Item();
-            ItemDAO daoI = new ItemDAO();
+        int input = JOptionPane.showConfirmDialog(null,
+                "Do you want to proceed?", "Select an Option...",JOptionPane.YES_NO_OPTION);
 
-            item.setItemId( (int)jTabItem.getValueAt(jTabItem.getSelectedRow(), 0));
+	// 0=yes, 1=no, 2=cancel
+        if (input == 0){
+            if (jTabItem.getSelectedRow() != -1){
+                Item item = new Item();
+                ItemDAO daoI = new ItemDAO();
 
-            daoI.delete(item);
-            readTableItem();
-            clearTextItem();
+                item.setItemId( (int)jTabItem.getValueAt(jTabItem.getSelectedRow(), 0));
 
+                daoI.delete(item);
+                readTableItem();
+                clearTextItem();
+            }
         }
     }//GEN-LAST:event_btndeleteItemActionPerformed
 
@@ -2919,63 +3119,66 @@ public class NHMSMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextResidentRoomActionPerformed
 
     private void jBtnResidentPicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnResidentPicActionPerformed
-        // TODO add your handling code here:
-        // Cria o objeto Janela de Sele��o de Arquivos
-        javax.swing.JFileChooser seletor =
-        new javax.swing.JFileChooser();
-        // seletor.setCurrentDirectory(new File());
+         
+        if (jTextResidentName.getText() != null && jTextResidentName.getText().length() > 3) {
+             // criation of the object window to select files
+            javax.swing.JFileChooser seletor =
+            new javax.swing.JFileChooser();
+          
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Image JPG", "jpg");
+            seletor.addChoosableFileFilter(filter);
+            seletor.setAcceptAllFileFilterUsed(false);
+            seletor.setCurrentDirectory(new File("D:\\CCT projects\\imagem"));
+            // Show the window of selection
+            int acao = seletor.showOpenDialog(this);
 
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Image JPG", "jpg");
-        seletor.addChoosableFileFilter(filter);
-        seletor.setAcceptAllFileFilterUsed(false);
-        seletor.setCurrentDirectory(new File("D:\\CCT projects\\imagem"));
-        // Exibir a janela de sele��o
-        int acao = seletor.showOpenDialog(this);
+            // capture the file selected on the window
+            java.io.File f = seletor.getSelectedFile();
 
-        // Captura o arquivo selecionado na janela
-        java.io.File f = seletor.getSelectedFile();
-
-        // Essa vari�vel deve ser declara no in�cio do
-        // c�digo, logo ap�s o nome da classe
-        // ex.  public class Cadastro{
-            //          String caminho;
-
+            //using a public variable to get the path of the file
             caminho = f.getPath();
-            // System.out.println(caminho);
+            //setting the image with the path selected
             Image img = new ImageIcon(caminho).getImage().getScaledInstance(jResidentPhoto.getWidth(),jResidentPhoto.getHeight(), Image.SCALE_DEFAULT );
+            //setting the resident photo with the image
             jResidentPhoto.setIcon(new ImageIcon(img));
+            //getting the name of the resident
             String nome = jTextResidentName.getText().trim();
-            //alterar aqui
+            //creating a File changing the name of it
             File copia = new File("./src/images/"+nome+".jpg");
+            //instance of tools class
             Tools tools = new Tools();
+            //coping the file to the package images
             tools.copiar(f, copia);
+            //setting the new address and name
             caminho = "./src/images/"+nome+".jpg";
-
+        }else{
+            JOptionPane.showMessageDialog(null, "Error. The resident Name can not be empty. Type it again");
+        }
     }//GEN-LAST:event_jBtnResidentPicActionPerformed
 
     private void jTextResidentKindNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextResidentKindNameFocusLost
         // TODO add your handling code here:
         String texto=jTextResidentKindName.getText();
-        if (!texto.trim().isEmpty()){
-            Tools tools = new Tools();
-            boolean result = tools.validateText(texto);
-            if (!result){
-                JOptionPane.showMessageDialog(null, "Error. Name not valid. Type it again");
-                employeename.requestFocus();
-            }
+        
+        Tools tools = new Tools();
+        boolean result = tools.validateText(texto);
+        if (!result){
+            JOptionPane.showMessageDialog(null, "Error. Name of Kind not valid. Type it again");
+            jTextResidentKindName.requestFocus();
         }
+        
 
     }//GEN-LAST:event_jTextResidentKindNameFocusLost
 
     private void jTextResidentKindEmailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextResidentKindEmailFocusLost
         // TODO add your handling code here:
-        String texto=employeeemail.getText();
+        String texto=jTextResidentKindEmail.getText();
 
         Tools tools = new Tools();
         boolean result = tools.validateEmail(texto);
         if (!result){
             JOptionPane.showMessageDialog(null, "Error. Email not valid. Type it again");
-            employeeemail.requestFocus();
+            jTextResidentKindEmail.requestFocus();
         }
     }//GEN-LAST:event_jTextResidentKindEmailFocusLost
 
@@ -3079,17 +3282,22 @@ public class NHMSMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jbtnupdateResidentActionPerformed
 
     private void btndeleteResidentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteResidentActionPerformed
-        // TODO add your handling code here:
-        if (jTabResident.getSelectedRow() != -1){
-            NextKind nextkind = new NextKind();
-            ResidentDAO daoR = new ResidentDAO();
+        int input = JOptionPane.showConfirmDialog(null,
+                "Do you want to proceed?", "Select an Option...",JOptionPane.YES_NO_OPTION);
 
-            nextkind.setResidentId((int)jTabResident.getValueAt(jTabResident.getSelectedRow(), 0));
+	// 0=yes, 1=no, 2=cancel
+        if (input == 0){
+            if (jTabResident.getSelectedRow() != -1){
+                NextKind nextkind = new NextKind();
+                ResidentDAO daoR = new ResidentDAO();
 
-            daoR.deleteNext(nextkind);
-            readTableResident();
-            clearTextResident();
+                nextkind.setResidentId((int)jTabResident.getValueAt(jTabResident.getSelectedRow(), 0));
 
+                daoR.deleteNext(nextkind);
+                readTableResident();
+                clearTextResident();
+
+            }
         }
     }//GEN-LAST:event_btndeleteResidentActionPerformed
 
@@ -3147,23 +3355,6 @@ public class NHMSMenu extends javax.swing.JFrame {
     private void jTextDateRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextDateRoutineActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextDateRoutineActionPerformed
-
-    private void jComboCategoryRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboCategoryRoutineActionPerformed
-        // TODO add your handling code here:
-
-        jComboItemsRoutine.removeAllItems();
-        ItemDAO dao = new ItemDAO();
-        Item item = new Item();
-        List<Item> listitem = new ArrayList<>();
-
-        listitem=dao.searchCategory(jComboCategoryRoutine.getSelectedItem().toString());
-
-        for(Item e:listitem){
-            jComboItemsRoutine.addItem(e.getItemId()+" - "+e.getDescription());
-
-        }
-
-    }//GEN-LAST:event_jComboCategoryRoutineActionPerformed
 
     private void jComboItemsRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboItemsRoutineActionPerformed
         // TODO add your handling code here:
@@ -3304,195 +3495,287 @@ public class NHMSMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jTabRoutineKeyReleased
 
     private void btndeleteRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteRoutineActionPerformed
-        // TODO add your handling code here:
-        if (jTabRoutine.getSelectedRow() != -1){
+        
+        int input = JOptionPane.showConfirmDialog(null,
+                "Do you want to proceed?", "Select an Option...",JOptionPane.YES_NO_OPTION);
 
-            DailyRoutine routine = new DailyRoutine();
-            RoutineDAO daoRo = new RoutineDAO();
+	// 0=yes, 1=no, 2=cancel
+        if (input == 0){
+            // checking if the routine is selected
+            if (jTabRoutine.getSelectedRow() != -1){
 
-            routine.setId((int)jTabRoutine.getValueAt(jTabRoutine.getSelectedRow(), 0));
+                DailyRoutine routine = new DailyRoutine();
+                RoutineDAO daoRo = new RoutineDAO();
 
-            daoRo.delete(routine);
-            readTableRoutine();
-            clearTextRoutine();
+                //setting the routine id
+                routine.setId((int)jTabRoutine.getValueAt(jTabRoutine.getSelectedRow(), 0));
 
+                //using the method delete
+                daoRo.delete(routine);
+                //updating the routine table
+                readTableRoutine();
+                //cleaning the form
+                clearTextRoutine();
+            }
         }
     }//GEN-LAST:event_btndeleteRoutineActionPerformed
 
     private void jbtnupdateRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnupdateRoutineActionPerformed
-        // TODO add your handling code here:
-        DailyRoutine routine = new DailyRoutine();
-        EmployeeDAO daoE = new EmployeeDAO();
-        ResidentDAO daoRe = new ResidentDAO();
-        ItemDAO daoItem = new ItemDAO();
-
-        List <Resident> listresident = new ArrayList<>();
-        listresident=daoRe.searchResidentId(idResident);
-
-        Resident resident=null;
-        for(Resident c : listresident) {
-            if(c.getName().equals(jTextResidentNameRoutine.getText())){
-                resident = new Resident();
-                resident.setResidentId(c.getResidentId());
-                routine.setResident(resident);
-
+        // checking if a routine was selected
+         if (jTabRoutine.getSelectedRow() != -1){
+            //checking if the resident name is not empty 
+            if(jTextResidentNameRoutine.getText()!= null && jTextResidentNameRoutine.getText().length()>0){
+                DailyRoutine routine = new DailyRoutine();
+                EmployeeDAO daoE = new EmployeeDAO();
+                ResidentDAO daoRe = new ResidentDAO();
+                ItemDAO daoItem = new ItemDAO();
+                //list of resident
+                List <Resident> listresident = new ArrayList<>();
+                listresident=daoRe.searchResidentId(idResident);
+                Resident resident=null;
+                //setting all data from the resident
+                for(Resident c : listresident) {
+                    if(c.getName().equals(jTextResidentNameRoutine.getText())){
+                        resident = new Resident();
+                        resident.setResidentId(c.getResidentId());
+                        routine.setResident(resident);
+                    }
+                }
+                RoutineDAO daoRou = new RoutineDAO();
+                //getting the value from the combo item
+                String itemstr=String.valueOf(jComboItemsRoutine.getSelectedItem());
+                String array[] = new String[2];
+                array = itemstr.split(" - ");
+                //getting the item id
+                int itemid=Integer.parseInt(array[0]);
+                //instance of the item list
+                List <Item> listItem = new ArrayList<>();
+                //searching item by id
+                listItem=daoItem.searchItem(itemid);
+                Item item = null;
+                for(Item c : listItem) {
+                    item = new Item();
+                    //setting all data of item
+                    item.setItemId(itemid);
+                    item.setCategory(c.getCategory());
+                    item.setDescription(c.getDescription());
+                    routine.setItem(item);
+                }
+                List <Employee> listemployee = new ArrayList<>();
+                listemployee=daoE.search(idEmployee);
+                Employee emplo = null;
+                for(Employee c : listemployee) {
+                    if(c.getEmployeeId()==idEmployee){
+                        emplo = new Employee();
+                        emplo.setEmployeeId(c.getEmployeeId());
+                        emplo.setName(c.getName());
+                        emplo.setDateofbirth(c.getDateofbirth());
+                        emplo.setPpsnumber(c.getPpsnumber());
+                        emplo.setPhone(c.getPhone());
+                        emplo.setEmail(c.getEmail());
+                        emplo.setAddress(c.getAddress());
+                        emplo.setCertificate(c.getCertificate());
+                        emplo.setSpecialist(c.getSpecialist());
+                        emplo.setNationality(c.getNationality());
+                        emplo.setPassport(c.getPassport());
+                        emplo.setStartdate(c.getStartdate());
+                        emplo.setLocation(c.getLocation());
+                        emplo.setTypeoftime(c.getTypeoftime());
+                        emplo.setJobtitle(c.getJobtitle());
+                        emplo.setPassword(c.getPassword());
+                    }
+                }
+                //setting the routine data
+                routine.setId(Integer.parseInt(jTabRoutine.getValueAt(jTabRoutine.getSelectedRow(), 0).toString()));
+                routine.setDate(actualDate.toString());
+                routine.setMeal(jComboMealRoutine.getSelectedItem().toString());
+                routine.setQuantity(jComboQuantityRoutine.getSelectedItem().toString());
+                routine.setComments(jTextCommentsRoutine.getText());
+                routine.setEmployee(emplo);
+                //updating the routine data
+                daoRou.update(routine);
+                readTableRoutine();
+                clearTextRoutine();
+            }else{
+                JOptionPane.showMessageDialog(null, "Error. Resident is not valid. Select it from the table");
+                jTextResidentNameRoutine.requestFocus();
             }
-        }
-
-        RoutineDAO daoRou = new RoutineDAO();
-
-        String itemstr=String.valueOf(jComboItemsRoutine.getSelectedItem());
-
-        String array[] = new String[2];
-
-        array = itemstr.split(" - ");
-
-        int itemid=Integer.parseInt(array[0]);
-
-        List <Item> listItem = new ArrayList<>();
-        listItem=daoItem.searchItem(itemid);
-
-        Item item = null;
-        for(Item c : listItem) {
-
-            System.out.println("I am inside the if "+c.getItemId());
-            item = new Item();
-
-            item.setItemId(itemid);
-            item.setCategory(c.getCategory());
-            item.setDescription(c.getDescription());
-            routine.setItem(item);
-
-        }
-
-        List <Employee> listemployee = new ArrayList<>();
-        listemployee=daoE.search(idEmployee);
-
-        Employee emplo = null;
-        for(Employee c : listemployee) {
-            if(c.getEmployeeId()==idEmployee){
-
-                emplo = new Employee();
-                emplo.setEmployeeId(c.getEmployeeId());
-                emplo.setName(c.getName());
-                emplo.setDateofbirth(c.getDateofbirth());
-                emplo.setPpsnumber(c.getPpsnumber());
-                emplo.setPhone(c.getPhone());
-                emplo.setEmail(c.getEmail());
-                emplo.setAddress(c.getAddress());
-                emplo.setCertificate(c.getCertificate());
-                emplo.setSpecialist(c.getSpecialist());
-                emplo.setNationality(c.getNationality());
-                emplo.setPassport(c.getPassport());
-                emplo.setStartdate(c.getStartdate());
-                emplo.setLocation(c.getLocation());
-                emplo.setTypeoftime(c.getTypeoftime());
-                emplo.setJobtitle(c.getJobtitle());
-                emplo.setPassword(c.getPassword());
-
-            }
-        }
-
-        routine.setId(Integer.parseInt(jTabRoutine.getValueAt(jTabRoutine.getSelectedRow(), 0).toString()));
-        routine.setDate(actualDate.toString());
-        routine.setMeal(jComboMealRoutine.getSelectedItem().toString());
-        routine.setQuantity(jComboQuantityRoutine.getSelectedItem().toString());
-        routine.setComments(jTextCommentsRoutine.getText());
-        routine.setEmployee(emplo);
-
-        daoRou.update(routine);
-        readTableRoutine();
-
-        clearTextRoutine();
+         }
     }//GEN-LAST:event_jbtnupdateRoutineActionPerformed
 
     private void jBtnSaveRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSaveRoutineActionPerformed
         // TODO add your handling code here:
-        DailyRoutine routine = new DailyRoutine();
-        EmployeeDAO daoE = new EmployeeDAO();
-        ResidentDAO daoRe = new ResidentDAO();
-        ItemDAO daoItem = new ItemDAO();
+        //checking if the resident name is not empty
+        if(jTextResidentNameRoutine.getText()!= null && jTextResidentNameRoutine.getText().length()>0){
+            DailyRoutine routine = new DailyRoutine();
+            EmployeeDAO daoE = new EmployeeDAO();
+            ResidentDAO daoRe = new ResidentDAO();
+            ItemDAO daoItem = new ItemDAO();
 
-        List <Resident> listresident = new ArrayList<>();
-        listresident=daoRe.searchResidentId(idResident);
+            //list of resident
+            List <Resident> listresident = new ArrayList<>();
+            //searching the resident using dao to connect to the database
+            listresident=daoRe.searchResidentId(idResident);
 
-        Resident resident=null;
+            Resident resident=null;
 
-        for(Resident c : listresident) {
-            if(c.getName().equals(jTextResidentNameRoutine.getText())){
-                resident = new Resident();
-                resident.setResidentId(c.getResidentId());
-                routine.setResident(resident);
+            //loop to setting all data from resident
+            for(Resident c : listresident) {
+                if(c.getName().equals(jTextResidentNameRoutine.getText())){
+                    resident = new Resident();
+                    resident.setResidentId(c.getResidentId());
+                    routine.setResident(resident);
 
+                }
             }
-        }
 
-        RoutineDAO daoRo = new RoutineDAO();
-
-        String itemstr=String.valueOf(jComboItemsRoutine.getSelectedItem());
-
-        String array[] = new String[2];
-
-        array = itemstr.split(" - ");
-
-        int itemid=Integer.parseInt(array[0]);
-
-        List <Item> listItem = new ArrayList<>();
-        listItem=daoItem.searchItem(itemid);
-
-        Item item = null;
-        for(Item c : listItem) {
-            if(c.getItemId()==itemid){
-                System.out.println(c.getDescription());
-                item = new Item();
-                item.setItemId(c.getItemId());
-                item.setCategory(c.getCategory());
-                item.setDescription(c.getDescription());
-
+            RoutineDAO daoRo = new RoutineDAO();
+            //getting the value selected from the comboitem
+            String itemstr=String.valueOf(jComboItemsRoutine.getSelectedItem());
+            //setting the array with this values eg 1 - banana
+            String array[] = new String[2];
+            //spliting the values in two
+            array = itemstr.split(" - ");
+            //getting the item id
+            int itemid=Integer.parseInt(array[0]);
+            //list of item
+            List <Item> listItem = new ArrayList<>();
+            //searching the item using dao to connect to the database
+            listItem=daoItem.searchItem(itemid);
+            Item item = null;
+            //for loop to fill the informations
+            for(Item c : listItem) {
+                if(c.getItemId()==itemid){
+                    item = new Item();
+                    item.setItemId(c.getItemId());
+                    item.setCategory(c.getCategory());
+                    item.setDescription(c.getDescription());
+                }
             }
-        }
-
-        List <Employee> listemployee = new ArrayList<>();
-        listemployee=daoE.search(idEmployee);
-
-        Employee emplo = null;
-        for(Employee c : listemployee) {
-            if(c.getEmployeeId()==idEmployee){
-
-                emplo = new Employee();
-                emplo.setEmployeeId(c.getEmployeeId());
-                emplo.setName(c.getName());
-                emplo.setDateofbirth(c.getDateofbirth());
-                emplo.setPpsnumber(c.getPpsnumber());
-                emplo.setPhone(c.getPhone());
-                emplo.setEmail(c.getEmail());
-                emplo.setAddress(c.getAddress());
-                emplo.setCertificate(c.getCertificate());
-                emplo.setSpecialist(c.getSpecialist());
-                emplo.setNationality(c.getNationality());
-                emplo.setPassport(c.getPassport());
-                emplo.setStartdate(c.getStartdate());
-                emplo.setLocation(c.getLocation());
-                emplo.setTypeoftime(c.getTypeoftime());
-                emplo.setJobtitle(c.getJobtitle());
-                emplo.setPassword(c.getPassword());
-
+            List <Employee> listemployee = new ArrayList<>();
+            //searching the employee using dao to connect to the database
+            listemployee=daoE.search(idEmployee);
+            Employee emplo = null;
+            for(Employee c : listemployee) {
+                if(c.getEmployeeId()==idEmployee){
+                    //setting the employee data
+                    emplo = new Employee();
+                    emplo.setEmployeeId(c.getEmployeeId());
+                    emplo.setName(c.getName());
+                    emplo.setDateofbirth(c.getDateofbirth());
+                    emplo.setPpsnumber(c.getPpsnumber());
+                    emplo.setPhone(c.getPhone());
+                    emplo.setEmail(c.getEmail());
+                    emplo.setAddress(c.getAddress());
+                    emplo.setCertificate(c.getCertificate());
+                    emplo.setSpecialist(c.getSpecialist());
+                    emplo.setNationality(c.getNationality());
+                    emplo.setPassport(c.getPassport());
+                    emplo.setStartdate(c.getStartdate());
+                    emplo.setLocation(c.getLocation());
+                    emplo.setTypeoftime(c.getTypeoftime());
+                    emplo.setJobtitle(c.getJobtitle());
+                    emplo.setPassword(c.getPassword());
+                }
             }
+            //setting routine data
+            routine.setDate(actualDate.toString());
+            routine.setMeal(jComboMealRoutine.getSelectedItem().toString());
+            routine.setItem(item);
+            routine.setQuantity(jComboQuantityRoutine.getSelectedItem().toString());
+            routine.setComments(jTextCommentsRoutine.getText());
+            routine.setEmployee(emplo);
+            //saving routine using DAO class
+            daoRo.Save(routine);
+            //updating the routine table
+            readTableRoutine();
+
+           
+
+        }else{
+            JOptionPane.showMessageDialog(null, "Error. Resident is not valid. Select it from the table");
+            jTextResidentNameRoutine.requestFocus();
         }
-
-        routine.setDate(actualDate.toString());
-        routine.setMeal(jComboMealRoutine.getSelectedItem().toString());
-        routine.setItem(item);
-        routine.setQuantity(jComboQuantityRoutine.getSelectedItem().toString());
-        routine.setComments(jTextCommentsRoutine.getText());
-        routine.setEmployee(emplo);
-
-        daoRo.Save(routine);
-        readTableRoutine();
-
-        clearTextRoutine();
+       
+       
+        
 
     }//GEN-LAST:event_jBtnSaveRoutineActionPerformed
+
+    private void listItems(String selected){
+         jComboItemsRoutine.removeAllItems();
+        ItemDAO dao = new ItemDAO(); 
+        List<Item> listitem = new ArrayList();
+        listitem=dao.searchCategory(selected);
+       
+        int i=0;
+        for(Item e:listitem){
+           
+            jComboItemsRoutine.addItem(e.getItemId()+" - "+ e.getDescription());
+            i++;
+        }
+    }
+    
+    private void jComboCategoryItemRoutineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboCategoryItemRoutineActionPerformed
+        // TODO add your handling code here:
+        
+        listItems(jComboCategoryItemRoutine.getSelectedItem().toString());
+
+    }//GEN-LAST:event_jComboCategoryItemRoutineActionPerformed
+
+    private void jTextResidentNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextResidentNameFocusLost
+        // TODO add your handling code here:
+        String texto=jTextResidentName.getText();
+        
+        Tools tools = new Tools();
+        boolean result = tools.validateText(texto);
+        if (!result){
+            JOptionPane.showMessageDialog(null, "Error. Name of Resident not valid. Type it again");
+            jTextResidentName.requestFocus();
+        }
+        
+    }//GEN-LAST:event_jTextResidentNameFocusLost
+
+    private void employeeppsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_employeeppsFocusLost
+        // TODO add your handling code here:
+        
+        String texto=employeepps.getText();
+        
+        Tools tools = new Tools();
+        boolean result = tools.validatePPS(texto);
+        if (!result){
+            JOptionPane.showMessageDialog(null, "Error. PPS number not valid. Type it again");
+            employeepps.requestFocus();
+        }
+    }//GEN-LAST:event_employeeppsFocusLost
+
+    private void jTextItemDescriptionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextItemDescriptionFocusLost
+        // TODO add your handling code here:
+        
+        String texto=jTextItemDescription.getText();
+        
+        Tools tools = new Tools();
+        boolean result = tools.validateText(texto);
+        if (!result){
+            JOptionPane.showMessageDialog(null, "Error. Description not valid. Type it again");
+            jTextItemDescription.requestFocus();
+        }
+    }//GEN-LAST:event_jTextItemDescriptionFocusLost
+
+    private void jComboStartRosterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboStartRosterActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboStartRosterActionPerformed
+
+    private void employeelevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_employeelevelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_employeelevelActionPerformed
+
+    private void itemsbtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemsbtn2ActionPerformed
+        // TODO add your handling code here:
+        jTabPanel.setSelectedIndex(3);
+        readTableItem();
+        jLabTitle.setText("Item");
+    }//GEN-LAST:event_itemsbtn2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -3548,6 +3831,7 @@ public class NHMSMenu extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser employeedateofbirth;
     private javax.swing.JTextField employeeemail;
     private javax.swing.JTextField employeejobtitle;
+    private javax.swing.JComboBox<String> employeelevel;
     private javax.swing.JFormattedTextField employeelocation;
     private javax.swing.JTextField employeename;
     private javax.swing.JFormattedTextField employeepassport;
@@ -3558,14 +3842,14 @@ public class NHMSMenu extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser employeestartdate;
     private javax.swing.JComboBox<String> employeetypeoftime;
     private javax.swing.JLabel foto;
-    private javax.swing.JButton itembtn;
+    private javax.swing.JButton itemsbtn2;
     private javax.swing.JButton jBtnOpenFile;
     private javax.swing.JButton jBtnResidentPic;
     private javax.swing.JButton jBtnSaveItem;
     private javax.swing.JButton jBtnSaveResident;
     private javax.swing.JButton jBtnSaveRoutine;
     private javax.swing.JComboBox<String> jComboBoxItemCategory;
-    private javax.swing.JComboBox<String> jComboCategoryRoutine;
+    private javax.swing.JComboBox<String> jComboCategoryItemRoutine;
     private javax.swing.JComboBox<String> jComboEmployeeRoster;
     private javax.swing.JComboBox<String> jComboFinishRoster;
     private javax.swing.JComboBox<String> jComboFloorRoster;
@@ -3578,6 +3862,8 @@ public class NHMSMenu extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboResidentMobility;
     private javax.swing.JComboBox<String> jComboStartRoster;
     private javax.swing.JLabel jLResidentPicRoutine;
+    private javax.swing.JLabel jLabTitle;
+    private javax.swing.JLabel jLabUserName;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -3620,6 +3906,7 @@ public class NHMSMenu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel51;
     private javax.swing.JLabel jLabel52;
     private javax.swing.JLabel jLabel53;
+    private javax.swing.JLabel jLabel54;
     private javax.swing.JLabel jLabel55;
     private javax.swing.JLabel jLabel56;
     private javax.swing.JLabel jLabel57;
@@ -3627,9 +3914,9 @@ public class NHMSMenu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel59;
     private javax.swing.JLabel jLabel60;
     private javax.swing.JLabel jLabel61;
-    private javax.swing.JLabel jLabel62;
     private javax.swing.JLabel jLabel63;
     private javax.swing.JLabel jLabel64;
+    private javax.swing.JLabel jLabel65;
     private javax.swing.JPanel jPaneResidentImage;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

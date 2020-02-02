@@ -24,6 +24,7 @@ public class Employee extends Person {
     private String nationality;
     private String passport;
     private String password;
+    private int    level;
     
     public Employee(){}
     
@@ -165,6 +166,15 @@ public class Employee extends Person {
         this.password = password;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    
     @Override
     public String toString() {
         return "Employee{" + "employeeId=" + employeeId + ", phone=" + phone + ", email=" + email + ", startdate=" + startdate + ", certificate=" + certificate + ", specialist=" + specialist + ", jobtitle=" + jobtitle + ", location=" + location + ", typeoftime=" + typeoftime + ", nationality=" + nationality + ", passport=" + passport + ", password=" + password + '}';

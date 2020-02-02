@@ -199,13 +199,12 @@ public class ItemDAO {
       public List<Item> searchCategory(String category){
         con = ConnectionFactory.getConnection();
      
-       // String sql="Select * from resident WHERE id=?";
-         String sql="SELECT * FROM item "
-                   +"WHERE category like ?";
+        String sql="SELECT * FROM item where category like ?";
+       
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        List<Item> items = new ArrayList();
-        Item item1 = new Item();
+        List<Item> itemslist = new ArrayList();
+   
        
         try {
             stmt=con.prepareStatement(sql);
@@ -213,17 +212,17 @@ public class ItemDAO {
             rs = stmt.executeQuery();
             
             while (rs.next()){
-               
-                
-                item1.setItemId(rs.getInt("id"));
-                item1.setCategory(rs.getString("category"));
-                item1.setDescription(rs.getString("description"));
-                item1.setPicture(rs.getString("picture"));
-                
-                
-                items.add(item1);
+                Item items1 = new Item();
+   
+                    items1.setItemId(rs.getInt("id"));
+                    items1.setCategory(rs.getString("category"));
+                    items1.setDescription(rs.getString("description"));
+                    items1.setPicture(rs.getString("picture"));
                 
                 
+                    itemslist.add(items1);
+                
+
                 
             }
         } catch (SQLException ex) {
@@ -232,7 +231,7 @@ public class ItemDAO {
             ConnectionFactory.CloseConnection(con, stmt, rs);
         }
         
-         return  items;
+         return  itemslist;
         
         
      }

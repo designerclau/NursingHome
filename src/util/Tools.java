@@ -46,9 +46,12 @@ public class Tools {
     
     
     public void copiar(File fonte, File destino) {
-        try {            
+        try {           
+            //instance of FileInputStream origin
             FileChannel in = new FileInputStream(fonte).getChannel();
-            FileChannel out = new FileOutputStream(destino).getChannel();            
+            //instance of FileInputStream destiny
+            FileChannel out = new FileOutputStream(destino).getChannel();  
+            //transfer file
             out.transferFrom(in, 0, in.size());
 
             in.close();
@@ -57,7 +60,7 @@ public class Tools {
         } catch (IOException ex) {
            JOptionPane.showMessageDialog(null, "Error. It was not copied sucessfuly"+ex);       
             }
-        }
+    }
     
     
     //mehtod to validate integer values
@@ -108,19 +111,9 @@ public class Tools {
         //creating the boolean variable isTextValid and initialize it with false
         boolean isTextValid = false;
         //if the text is not null and it length is bigger than zero
-        if (text != null && text.length() > 0) {
-            //regular expression
-            String expression = "\\[A-Z\\]\\[a-z\\]{3,}";
-           // String expression = "^(?:[\\p{Lu}&&[\\p{IsLatin}]])(?:(?:')?(?:[\\p{Ll}&&[\\p{IsLatin}]]))+(?:\\-(?:[\\p{Lu}&&[\\p{IsLatin}]])(?:(?:')?(?:[\\p{Ll}&&[\\p{IsLatin}]]))+)*(?: (?:(?:e|y|de(?:(?: la| las| lo| los))?|do|dos|da|das|del|van|von|bin|le) )?(?:(?:(?:d'|D'|O'|Mc|Mac|al\\-))?(?:[\\p{Lu}&&[\\p{IsLatin}]])(?:(?:')?(?:[\\p{Ll}&&[\\p{IsLatin}]]))+|(?:[\\p{Lu}&&[\\p{IsLatin}]])(?:(?:')?(?:[\\p{Ll}&&[\\p{IsLatin}]]))+(?:\\-(?:[\\p{Lu}&&[\\p{IsLatin}]])(?:(?:')?(?:[\\p{Ll}&&[\\p{IsLatin}]]))+)*))+(?: (?:Jr\\.|II|III|IV))?$";
-
-            //method pattern to check the regular expression
-            Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-            //instance of Matcher method
-            Matcher matcher = pattern.matcher(text);
-            //if the value passed by parameter matche with the regular expression the variable isTextValid receives true
-            if (matcher.matches()) {
-                isTextValid = true;
-            }
+        if (text != null && text.length() > 3) {
+            isTextValid = true;
+            
         }
         //return the value in the variable isTextValid
         return isTextValid;
@@ -150,20 +143,26 @@ public class Tools {
       
    
     public String checkPassword(String pass){
-        
+        //creation of variables
         String formatedpass=null;
+        //creation and initialization of variable type of MessageDigest
         MessageDigest md=null;
         try {
-                md = MessageDigest.getInstance("SHA-256");
+             //instance of MessageDigest in the format "SHA-256"
+             md = MessageDigest.getInstance("SHA-256");
 
+            //getting the bytes of the password parameter 
             byte[] messagedigest = md.digest(pass.getBytes("UTF-8"));
             
+            //instance of StringBuilder
             StringBuilder sb = new StringBuilder();
             
+            //for loop to get each letter of String in the format "%02X", 0xFF & b)
             for(byte b:messagedigest){
                 sb.append(String.format("%02X", 0xFF & b));
             }
             
+            //variable receive the result of the string
             formatedpass = sb.toString();
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
@@ -171,6 +170,7 @@ public class Tools {
                 Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        //return the password encrypted
         return formatedpass;
     }
 

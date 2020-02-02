@@ -253,10 +253,19 @@ public class Login extends javax.swing.JFrame {
         char[] passw=jPassworduser.getPassword();
         // new MenuPrincipal().setVisible(true);
 
-        if (daoE.login(email,new String(passw))){
+        String returning=daoE.login(email,new String(passw));
+        String array[] = new String[4];
+
+        array = returning.split(" - ");
+        int id=Integer.parseInt(array[1]);
+        String name=array[2];
+        int levelaccess=Integer.parseInt(array[3]);
+        
+
+        if (array[0].equalsIgnoreCase("true")){
             
             this.dispose();
-            new NHMSMenu().setVisible(true);
+            new NHMSMenu(id, name, levelaccess).setVisible(true);
           //  new MenuTeste().setVisible(true);
 
         }else{

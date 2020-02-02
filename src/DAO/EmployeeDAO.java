@@ -40,7 +40,7 @@ public class EmployeeDAO {
         String pass = employee.getPassword();     
         boolean returning=false;
         
-        String sql="INSERT INTO employee (name,dateofbirth,ppsnumber,phone,email,address,certificate,specialist,country,passport,startdate,location,typeoftime,jobtitle,password) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql="INSERT INTO employee (name,dateofbirth,ppsnumber,phone,email,address,certificate,specialist,country,passport,startdate,location,typeoftime,jobtitle,password,level) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement stmt = null;
         
         try {
@@ -64,6 +64,7 @@ public class EmployeeDAO {
             stmt.setString(13, employee.getTypeoftime());
             stmt.setString(14, employee.getJobtitle());
             stmt.setString(15, formatedpass);
+            stmt.setInt(16,employee.getLevel());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Saved sucessfuly");
             returning= true;
@@ -108,6 +109,7 @@ public class EmployeeDAO {
                 employee.setTypeoftime(rs.getString("typeoftime"));
                 employee.setJobtitle(rs.getString("jobtitle"));
                 employee.setPassword(rs.getString("password"));
+                employee.setLevel(rs.getInt("level"));
                 
       
                 
@@ -132,7 +134,7 @@ public class EmployeeDAO {
         con = ConnectionFactory.getConnection();
      
         String sql="UPDATE employee SET name = ?, dateofbirth = ?, ppsnumber =?, phone =?,email =?,address =?, certificate =?, specialist =?, country =?, passport =?,"
-                   + "startdate =?, location =?,typeoftime =?,jobtitle =?, password =? WHERE id=?";
+                   + "startdate =?, location =?,typeoftime =?,jobtitle =?, password =? , level = ? WHERE id=?";
         PreparedStatement stmt = null; 
         
         try {
@@ -157,7 +159,8 @@ public class EmployeeDAO {
             stmt.setString(13, employee.getTypeoftime());
             stmt.setString(14, employee.getJobtitle());
             stmt.setString(15, formatedpass);
-            stmt.setInt(16, employee.getEmployeeId());
+            stmt.setInt(16,employee.getLevel());
+            stmt.setInt(17, employee.getEmployeeId());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Updated sucessfuly");
             return true;
@@ -204,7 +207,7 @@ public class EmployeeDAO {
                 employee1.setTypeoftime(rs.getString("typeoftime"));
                 employee1.setJobtitle(rs.getString("jobtitle"));
                 employee1.setPassword(rs.getString("password"));
-      
+                employee1.setLevel(rs.getInt("level"));
                 
                 employees.add(employee1);
             }
@@ -244,7 +247,7 @@ public class EmployeeDAO {
     }
      
      
-     public boolean login(String email, String password){
+     public String login(String email, String password){
         con = ConnectionFactory.getConnection();
      
         String sql="Select * from employee WHERE email=? and password=?";
@@ -252,6 +255,7 @@ public class EmployeeDAO {
         ResultSet rs = null;
         Employee employee1 = new Employee();
         boolean isvalid=false;
+        String returning=null;
         
         try {
             
@@ -264,8 +268,10 @@ public class EmployeeDAO {
             rs = stmt.executeQuery();
             
             if (rs.next()){
+                
+               returning="true"+" - "+rs.getInt("id")+" - "+rs.getString("name")+" - "+rs.getInt("level");
+               isvalid=true;  
                
-               isvalid=true;       
                
             }
         } catch (SQLException ex) {
@@ -274,7 +280,7 @@ public class EmployeeDAO {
             ConnectionFactory.CloseConnection(con, stmt, rs);
         }
         
-         return  isvalid;
+         return  returning;
         
         
     }
